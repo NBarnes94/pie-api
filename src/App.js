@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './App.css';
 import Navbar from './components/Navbar/Navbar';
+import Auth from '../src/components/Auth/Auth';
 
 function App() {
 
@@ -9,8 +10,8 @@ function App() {
   return (
     <div className="App">
       <Navbar setSession={sessionToken} />
-      <p>This is a test!</p>
       {sessionToken}
+      <Auth />
     </div>
   );
 }
