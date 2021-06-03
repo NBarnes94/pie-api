@@ -9,12 +9,12 @@ const Auth = (props) => {
     const [login, setLogin] = useState(true);
 
 
-    const title = () =>{
-        return login? 'Login' : 'Signup';
+    const title = () => {
+        return login ? 'Login' : 'Signup';
         // if login is true, return Login. If login is false, return Signup
     }
 
-    const loginToggle = (event) =>{
+    const loginToggle = (event) => {
         //Takes in an event so we can stop the page from reloading on form submission
         event.preventDefault();
 
@@ -27,40 +27,75 @@ const Auth = (props) => {
         setLastName('');
     }
 
+    const handleSubmit = (event) => {
+        event.preventDefault();
+
+        let reqBody = login ?
+            {
+                email: email,
+                password: password
+            } : {
+                firstName: firstName,
+                lastName: lastName,
+                email: email,
+                password: password
+            }
+
+        let url = login ? 'http://localhost:4000/user/login' : 'http://localhost:4000/user/register'
+
+        fetch(url, {
+            method: 'POST',
+            body: JSON.stringify(reqBody),
+            headers: new Headers({
+                "Content-Type": "application/json"
+            })
+        })
+            .then(response => response.json())
+            .then(json => props.updateLocalStorage(json.token))
+            .catch(err => console.log(err))
+    }
+
+
     const signupFields = () => !login ?
-
-    (
-        <div>
-            <label htmlFor="firstName">First Name:</label>
-            <br />
-            <input type="text" id="firstName" value={firstName} onChange={(e) => setFirstName(e.target.vale)} />
-            <br />
-            <label htmlFor="lastName">Last Name:</label>
-            <br />
-            <input type="text" id="lastName" value={lastName} onChange={(e) => setLastName(e.target.value)} />
-        </div>
-    ) : null;
-
-//*   If login was false, we want to show the additional fields. If login is true, show nothing(null)
-
+        (
+            <div>
+                <label htmlFor='firstName'>First Name</label>
+                <br />
+                <input type="text"
+                    id="firstName"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)} />
+                <br />
+                <label htmlFor='lastName'>Last Name</label>
+                <br />
+                <input type="text"
+                    id="lastName"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)} />
+            </div>
+        ) : null;
     return (
         <div>
             <form>
-                <h1>Login</h1>
-                <br />
+                <h1>{title()}</h1>
                 {signupFields()}
-                <label htmlFor='email'>Email:</label>
+                <label htmlFor="email">Email:</label>
                 <br />
-                <input type="text" id='email' value={email} onChange={(e) => setEmail(console.log(e), e.target.value)} />
+                <input type="text"
+                    id='email'
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)} />
                 <br />
                 <label htmlFor="password">Password:</label>
                 <br />
-                <input type="password" id="password" value={password} onChange={(e) => setPassword(console.log(e), e.target.value)} />
+                <input type="password"
+                    id='password'
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)} />
                 <br />
-                <button onClick={loginToggle} >Login/Sign-up Toggle</button>
+                <button onClick={loginToggle}>Login/Signup Toggle</button>
                 <br />
-                <button type='submit'>Submit User Data</button>
-
+                <button type="submit" onClick={handleSubmit}>Submit User Data</button>
             </form>
         </div>
     )
